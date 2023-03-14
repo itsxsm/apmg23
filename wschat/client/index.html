@@ -1,9 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>
+  .box {
+    display: inline-block;
+    border: 2px solid black;
+    height: 50px;
+    width: 50px;
+  }
+</style>
 </head>
 <body>
-	<script>
+  <div>
+    <div class="box" id="box-0" onClick="clickBox(0)">&nbsp;</div>
+    <div class="box" id="box-1" onClick="clickBox(1)">&nbsp;</div>
+    <div class="box" id="box-2" onClick="clickBox(2)">&nbsp;</div>
+  </div>
+  <div>
+    <div class="box" id="box-3" onClick="clickBox(3)">&nbsp;</div>
+    <div class="box" id="box-4" onClick="clickBox(4)">&nbsp;</div>
+    <div class="box" id="box-5" onClick="clickBox(5)">&nbsp;</div>
+  </div>
+  <div>
+    <div class="box" id="box-6" onClick="clickBox(6)">&nbsp;</div>
+    <div class="box" id="box-7" onClick="clickBox(7)">&nbsp;</div>
+    <div class="box" id="box-8" onClick="clickBox(8)">&nbsp;</div>
+  </div>
+
+  <script>
+    const boxDivs = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(idx => {
+      return document.getElementById(`box-${idx}`);
+    });
+
+    function clickBox(idx) {
+      boxDivs[idx].innerHTML = "X";
+      ws.send(`clientPlacesMarkOn ${idx}`);
+    }
+
+    function handleServerMessage(msg) {
+      if (msg.startsWith("serverPlacesMarkOn")) {
+        idx = parseInt(msg.split(" ")[1]);
+        // TODO: more stuff here....
+      } else if (msg.startsWith("HEY, HOW'S IT GOING?")) {
+        return;
+      } else {
+        console.log(`ERR: Unhandled Server Message: ${msg}`);
+      }
+    }
+
 		/* note: should use wss:// for "production" */
 		const ws = new WebSocket("ws://localhost:8082");
 
@@ -14,8 +58,9 @@
 		});
 
 		ws.addEventListener("message", e => {
-			console.log(e);
+			handleServerMessage(e.data);
 		})
 	</script>
+
 </body>
 </html>
